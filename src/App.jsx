@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 
 // ─── Constants ─────────────────────────────────────────────────────────────
-const GEMINI_API_KEY = ""; // Provided at runtime
 const DISTRICTS = [
   "Miraflores",
   "San Isidro",
@@ -1141,17 +1140,6 @@ function ChatModal({ onClose, t, lang }) {
     setMsgs((p) => [...p, { role: "user", text: txt }]);
     setBusy(true);
 
-    if (!GEMINI_API_KEY) {
-      setMsgs((p) => [
-        ...p,
-        {
-          role: "model",
-          text: lang === "es" ? "API no configurada." : "API not configured.",
-        },
-      ]);
-      setBusy(false);
-      return;
-    }
     try {
       const history = msgs.map((m) => ({
         role: m.role,
@@ -1159,17 +1147,14 @@ function ChatModal({ onClose, t, lang }) {
       }));
       history.push({ role: "user", parts: [{ text: txt }] });
 
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: history,
-            systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-          }),
-        }
-      );
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: history,
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        }),
+      });
       if (!res.ok) {
         const errText = await res.text();
         throw new Error(`HTTP ${res.status}: ${errText.slice(0, 100)}`);
