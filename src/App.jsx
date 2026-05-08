@@ -1,6 +1,3 @@
-Here is the complete updated `src/App.jsx`. Copy everything below and paste it into the GitHub editor for `src/App.jsx` on the `claude/handyman-marketplace-app-F8YNd` branch (or whichever branch you want to update):
-
-```jsx
 import React, { useState, useEffect, useRef } from "react";
 import {
   Home,
