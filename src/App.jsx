@@ -293,7 +293,7 @@ const TESTIMONIALS = [
 
 const DICT = {
   es: {
-    app_name: "PeruServ",
+    app_name: "SmartFix",
     location: "Ubicación actual",
     banner_badge: "100% Verificados",
     banner_title: "Tu casa, como nueva.",
@@ -329,7 +329,7 @@ const DICT = {
     login_required: "Inicia sesión para continuar",
     login_btn: "Iniciar sesión",
     welcome: "Bienvenido",
-    login_sub: "Inicia sesión en PeruServ",
+    login_sub: "Inicia sesión en SmartFix",
     email: "Email",
     password: "Contraseña",
     no_account: "¿No tienes cuenta?",
@@ -348,7 +348,7 @@ const DICT = {
     toast_confirmed: "¡Reserva confirmada! 🎉",
     status_confirmed: "Confirmada",
     status_pending: "Pendiente",
-    trust_strip: "+5,000 limeños confían en PeruServ",
+    trust_strip: "+5,000 limeños confían en SmartFix",
     verified_badge: "Técnicos Verificados",
     verified_tooltip: "Verificación de identidad, antecedentes y seguro incluidos",
     search_placeholder: "¿Qué necesitas hoy?",
@@ -358,7 +358,7 @@ const DICT = {
     change_district: "Cambiar distrito",
   },
   en: {
-    app_name: "PeruServ",
+    app_name: "SmartFix",
     location: "Current Location",
     banner_badge: "100% Verified",
     banner_title: "Your home, like new.",
@@ -394,7 +394,7 @@ const DICT = {
     login_required: "Please log in to continue",
     login_btn: "Log In",
     welcome: "Welcome",
-    login_sub: "Sign in to PeruServ",
+    login_sub: "Sign in to SmartFix",
     email: "Email",
     password: "Password",
     no_account: "Don't have an account?",
@@ -413,7 +413,7 @@ const DICT = {
     toast_confirmed: "Booking confirmed! 🎉",
     status_confirmed: "Confirmed",
     status_pending: "Pending",
-    trust_strip: "+5,000 Lima residents trust PeruServ",
+    trust_strip: "+5,000 Lima residents trust SmartFix",
     verified_badge: "Verified Technicians",
     verified_tooltip: "ID check, background check, and insurance included",
     search_placeholder: "What do you need today?",
@@ -709,12 +709,19 @@ function HomePage({ nav, setShowChat, t, lang, toggleLang }) {
 
   return (
     <>
-      {/* Header with PeruServ branding + tappable location */}
+      {/* Header with SmartFix branding + tappable location */}
       <div className="px-4 pt-8 pb-4 flex justify-between items-center bg-white relative">
         <div>
-          <p className="text-lg font-black text-indigo-600 leading-none mb-1">
-            PeruServ
-          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-8 h-8 bg-slate-800 rounded-lg flex items-center justify-center relative overflow-hidden">
+              <Home size={14} className="text-white absolute top-1 left-1/2 -translate-x-1/2" strokeWidth={2.5} />
+              <Wrench size={10} className="text-white absolute bottom-1 right-1" strokeWidth={3} />
+            </div>
+            <div>
+              <p className="text-base font-black text-slate-800 leading-none">SmartFix</p>
+              <p className="text-[9px] text-slate-400 font-bold tracking-tight leading-none">Home Service Hub</p>
+            </div>
+          </div>
           <button
             onClick={() => setShowDistrictPicker((v) => !v)}
             className="flex items-center gap-1 text-gray-800 font-bold"
@@ -1505,7 +1512,7 @@ function ChatModal({ onClose, t, lang }) {
   }, [msgs]);
 
   const SYSTEM_PROMPT = `
-    You are the "Virtual Master" (Maestro Virtual) of PeruServ, the official home services app for Lima, Peru.
+    You are the "Virtual Master" (Maestro Virtual) of SmartFix, the official home services app for Lima, Peru.
 
     LANGUAGE: Current user language is ${
       lang === "es" ? "Spanish" : "English"
