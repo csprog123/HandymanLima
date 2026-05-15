@@ -13,16 +13,16 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Signup webhook not configured" });
   }
 
-  const response = await fetch(webhookUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name,
-      email,
-      timestamp: new Date().toISOString(),
-      source: "SmartFix early-access",
-    }),
+  // Send as GET query params — Apps Script 302 redirects convert POST→GET,
+  // so query params are the only reliable way to pass data through.
+  const params = new URLSearchParams({
+    name,
+    email,
+    timestamp: new Date().toISOString(),
+    source: "SmartFix early-access",
   });
+
+  const response = await fetch(`${webhookUrl}?${params}`, { method: "GET" });
 
   if (!response.ok) {
     const text = await response.text();
