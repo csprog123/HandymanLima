@@ -356,6 +356,17 @@ const DICT = {
     testimonials_title: "Lo que dicen nuestros clientes",
     whatsapp_cta: "WhatsApp",
     change_district: "Cambiar distrito",
+    early_badge: "PRÓXIMAMENTE",
+    early_title: "¡Sé el primero en Lima!",
+    early_sub: "Regístrate ahora y recibe S/10 gratis al lanzamiento oficial.",
+    early_name: "Tu nombre",
+    early_email: "Tu correo",
+    early_btn: "Quiero mi S/10 →",
+    early_submitting: "Guardando...",
+    early_success_title: "¡Ya estás dentro! 🎉",
+    early_success_sub: "Te avisamos al lanzar y acreditamos tu S/10.",
+    early_error: "Algo salió mal. Intenta de nuevo.",
+    back_home: "Inicio",
   },
   en: {
     app_name: "SmartFix",
@@ -421,6 +432,17 @@ const DICT = {
     testimonials_title: "What our customers say",
     whatsapp_cta: "WhatsApp",
     change_district: "Change district",
+    early_badge: "COMING SOON",
+    early_title: "Be the first in Lima!",
+    early_sub: "Sign up now and get S/10 free when we officially launch.",
+    early_name: "Your name",
+    early_email: "Your email",
+    early_btn: "Claim my S/10 →",
+    early_submitting: "Saving...",
+    early_success_title: "You're in! 🎉",
+    early_success_sub: "We'll notify you at launch and credit your S/10.",
+    early_error: "Something went wrong. Please try again.",
+    back_home: "Home",
   },
 };
 
@@ -696,6 +718,82 @@ function Header({ title, nav, back, toggleLang, lang }) {
   );
 }
 
+function EarlyAccessCard({ t }) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | submitting | success | error
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) return;
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), email: email.trim() }),
+      });
+      if (!res.ok) throw new Error("failed");
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  if (status === "success") {
+    return (
+      <div className="mx-4 mb-6 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 text-white shadow-xl">
+        <div className="text-4xl mb-3">🎉</div>
+        <h3 className="text-lg font-black leading-tight">{t("early_success_title")}</h3>
+        <p className="text-emerald-100 text-sm mt-1">{t("early_success_sub")}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mx-4 mb-6 bg-gradient-to-br from-amber-400 to-orange-500 rounded-3xl p-5 shadow-xl relative overflow-hidden">
+      <div className="absolute top-[-30%] right-[-10%] w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+      <div className="relative z-10">
+        <span className="bg-white/20 text-white text-[9px] font-black tracking-widest px-2.5 py-1 rounded-full">
+          {t("early_badge")}
+        </span>
+        <h3 className="text-white font-black text-lg mt-2 leading-tight">
+          {t("early_title")}
+        </h3>
+        <p className="text-orange-100 text-xs mt-1 mb-4">{t("early_sub")}</p>
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <input
+            type="text"
+            placeholder={t("early_name")}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            className="w-full bg-white/90 backdrop-blur rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          <input
+            type="email"
+            placeholder={t("early_email")}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full bg-white/90 backdrop-blur rounded-xl px-4 py-2.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          {status === "error" && (
+            <p className="text-white text-xs font-bold">{t("early_error")}</p>
+          )}
+          <button
+            type="submit"
+            disabled={status === "submitting"}
+            className="w-full bg-white text-orange-600 font-black text-sm py-3 rounded-xl hover:bg-orange-50 active:scale-95 transition-all disabled:opacity-60 shadow-lg"
+          >
+            {status === "submitting" ? t("early_submitting") : t("early_btn")}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function HomePage({ nav, setShowChat, t, lang, toggleLang }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [district, setDistrict] = useState("Miraflores");
@@ -804,6 +902,9 @@ function HomePage({ nav, setShowChat, t, lang, toggleLang }) {
           <div className="absolute top-[-20%] right-[-10%] w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
         </div>
       </div>
+
+      {/* Early access sign-up */}
+      <EarlyAccessCard t={t} />
 
       {/* Search bar */}
       <div className="px-4 mb-5">
@@ -1228,6 +1329,7 @@ function BookingsPage({ bookings, nav, user, t, lang, toggleLang }) {
       <Header
         title={t("my_bookings")}
         nav={nav}
+        back="home"
         toggleLang={toggleLang}
         lang={lang}
       />
@@ -1322,6 +1424,7 @@ function ProfilePage({ user, logout, nav, notify, t, lang, toggleLang }) {
       <Header
         title={t("nav_profile")}
         nav={nav}
+        back="home"
         toggleLang={toggleLang}
         lang={lang}
       />
