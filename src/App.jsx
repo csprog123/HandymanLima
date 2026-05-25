@@ -513,7 +513,7 @@ export default function App() {
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
   const isAuthPage = ["login", "register"].includes(page);
 
-  const whatsappUrl = `https://wa.me/6597593232?text=${encodeURIComponent(
+  const whatsappUrl = `https://wa.me/6599999999?text=${encodeURIComponent(
     lang === "es"
       ? "Hola, necesito un servicio en Lima"
       : "Hello, I need a service in Lima"
