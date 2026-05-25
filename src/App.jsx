@@ -459,7 +459,7 @@ const ls = {
 };
 
 // Replace with your published Google Apps Script web app URL
-const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxKDQU3RmC9hjltj9oSBQOhSA34YLLgpknT5YAL4aGDFtrl9yM07TcxPIbALtbwBgxqRQ/exec";
 
 // ─── App Component ─────────────────────────────────────────────────────────
 export default function App() {
