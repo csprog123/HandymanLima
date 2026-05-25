@@ -356,6 +356,17 @@ const DICT = {
     testimonials_title: "Lo que dicen nuestros clientes",
     whatsapp_cta: "WhatsApp",
     change_district: "Cambiar distrito",
+    interest_title: "¿Quieres que te avisemos cuando lancemos?",
+    interest_yes: "Sí, avísame",
+    interest_no: "No, gracias",
+    interest_email_title: "¿Quieres que te contactemos?",
+    interest_email_sub: "Es opcional. Tu privacidad es importante para nosotros.",
+    interest_email_placeholder: "Tu correo electrónico (opcional)",
+    interest_skip: "Omitir",
+    interest_send: "Enviar",
+    interest_sending: "Enviando...",
+    interest_thanks_yes: "¡Gracias! Te avisaremos cuando lancemos. 🚀",
+    interest_thanks_no: "Gracias por tu respuesta.",
   },
   en: {
     app_name: "PeruServ",
@@ -421,6 +432,17 @@ const DICT = {
     testimonials_title: "What our customers say",
     whatsapp_cta: "WhatsApp",
     change_district: "Change district",
+    interest_title: "Want us to notify you when we launch?",
+    interest_yes: "Yes, notify me",
+    interest_no: "No, thanks",
+    interest_email_title: "Want us to reach you?",
+    interest_email_sub: "This is optional. Your privacy matters to us.",
+    interest_email_placeholder: "Your email address (optional)",
+    interest_skip: "Skip",
+    interest_send: "Submit",
+    interest_sending: "Submitting...",
+    interest_thanks_yes: "Thanks! We'll let you know when we launch. 🚀",
+    interest_thanks_no: "Thanks for your feedback.",
   },
 };
 
@@ -435,6 +457,9 @@ const ls = {
   set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
   del: (k) => localStorage.removeItem(k),
 };
+
+// Replace with your published Google Apps Script web app URL
+const APPS_SCRIPT_URL = "YOUR_APPS_SCRIPT_URL_HERE";
 
 // ─── App Component ─────────────────────────────────────────────────────────
 export default function App() {
@@ -796,6 +821,9 @@ function HomePage({ nav, setShowChat, t, lang, toggleLang }) {
         </div>
       </div>
 
+      {/* Interest panel */}
+      <InterestPanel t={t} lang={lang} />
+
       {/* Search bar */}
       <div className="px-4 mb-5">
         <div className="relative">
@@ -925,6 +953,123 @@ function HomePage({ nav, setShowChat, t, lang, toggleLang }) {
         </div>
       </div>
     </>
+  );
+}
+
+function InterestPanel({ t, lang }) {
+  const [step, setStep] = useState(() =>
+    ls.get("ps_interest_done") ? "done" : "prompt"
+  );
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  if (step === "done") return null;
+
+  const submit = async (interested, contactEmail = null) => {
+    setSubmitting(true);
+    try {
+      await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({
+          interested,
+          email: contactEmail || "",
+          lang,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+    } catch (_) {
+      // fire-and-forget — don't block UX on network errors
+    }
+    ls.set("ps_interest_done", true);
+    setSubmitting(false);
+    setStep(interested ? "thanks_yes" : "thanks_no");
+    if (!interested) setTimeout(() => setStep("done"), 3000);
+  };
+
+  if (step === "thanks_yes") {
+    return (
+      <div className="px-4 mb-6">
+        <div className="bg-emerald-50 border border-emerald-200 rounded-3xl p-5 text-center">
+          <div className="text-3xl mb-2">🚀</div>
+          <p className="text-emerald-700 font-bold text-sm">
+            {t("interest_thanks_yes")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "thanks_no") {
+    return (
+      <div className="px-4 mb-6">
+        <div className="bg-gray-50 border border-gray-200 rounded-3xl p-4 text-center">
+          <p className="text-gray-500 font-bold text-sm">
+            {t("interest_thanks_no")}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (step === "email") {
+    return (
+      <div className="px-4 mb-6">
+        <div className="bg-white border border-indigo-100 rounded-3xl p-5 shadow-sm">
+          <p className="text-gray-800 font-bold text-sm mb-1">
+            {t("interest_email_title")}
+          </p>
+          <p className="text-gray-400 text-xs mb-4">{t("interest_email_sub")}</p>
+          <input
+            type="email"
+            placeholder={t("interest_email_placeholder")}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full bg-gray-50 border-0 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 mb-3"
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={() => submit(true, null)}
+              disabled={submitting}
+              className="flex-1 text-indigo-600 font-bold text-sm py-2.5 rounded-xl border border-indigo-200 hover:bg-indigo-50 active:scale-95 transition-all disabled:opacity-50"
+            >
+              {t("interest_skip")}
+            </button>
+            <button
+              onClick={() => submit(true, email || null)}
+              disabled={submitting}
+              className="flex-1 bg-indigo-600 text-white font-bold text-sm py-2.5 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50"
+            >
+              {submitting ? t("interest_sending") : t("interest_send")}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-4 mb-6">
+      <div className="bg-white border border-gray-100 rounded-3xl p-5 shadow-sm">
+        <p className="text-gray-800 font-bold text-sm mb-4">
+          {t("interest_title")}
+        </p>
+        <div className="flex gap-3">
+          <button
+            onClick={() => setStep("email")}
+            className="flex-1 bg-indigo-600 text-white font-bold text-sm py-3 rounded-xl hover:bg-indigo-700 active:scale-95 transition-all"
+          >
+            {t("interest_yes")}
+          </button>
+          <button
+            onClick={() => submit(false)}
+            className="flex-1 text-gray-500 font-bold text-sm py-3 rounded-xl border border-gray-200 hover:bg-gray-50 active:scale-95 transition-all"
+          >
+            {t("interest_no")}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 
